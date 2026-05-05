@@ -15,7 +15,7 @@
 //**********************************************************************************//
 
 #define MAX_LINE_LENGTH 1024
-#define NSTEPS 10
+#define NSTEPS 1
 
 
 //Structure for a RRG vertex
