@@ -1,0 +1,20 @@
+#*************** ALGORITHMS STATS ***************
+
+# Graph Info: N = 1024, M = 2048
+# Best energy for                           Eg = -1351.380177
+
+# Samples Stats
+#Graph	 ALGO	                         Parameters	<Accepted>	<bestIt>	<bestIt(res)>	        Emin	     <Ebest>	std(<Ebest>)	   <f>	<|S|>	<BPit>	  <q>	Success	 Runs	  Time(s)
+      	   SA	           betaf = 10.00, it = 2^18	       nan	2.23e+05	     2.28e+08	-1348.225154	   -1342.110	       3.105	   nan	  1.0	   nan	  1.0	  0.000	  100	   5611.6
+      	   PA	   betaf = 10.00, R = 10, it = 2^18	       nan	2.03e+05	     2.08e+09	-1348.224130	   -1342.631	       2.770	   nan	  1.0	   nan	  1.0	  0.000	  100	  33100.8
+      	   PA	  betaf = 10.00, R = 100, it = 2^18	       nan	1.91e+05	     1.95e+10	-1349.411760	   -1343.032	       3.127	   nan	  1.0	   nan	  1.0	  0.000	  100	 325141.8
+      	   PA	 betaf = 10.00, R = 1000, it = 2^18	       nan	1.69e+05	     1.73e+11	-1349.266713	   -1346.716	       2.747	   nan	  1.0	   nan	  1.0	  0.000	   10	 325577.8
+      	   BP	                f = 25, beta = 0.00	     0.456	1.08e+04	     2.16e+07	-1351.380177	   -1347.031	       2.141	  25.0	 88.4	  22.7	 11.1	  0.010	  100	   2624.3
+
+# Averge Stats
+#                                ALGO	<dEmin/Eb>	Err(<dEmin/Eb>)	     <minIt>	 Err(<minIt>)	Success
+         SA: betaf = 10.00, it = 2^18	  0.006860	       0.002298	    2.28e+08	     0.00e+00	  0.000
+ PA: betaf = 10.00, R = 10, it = 2^18	  0.006474	       0.002050	    2.08e+09	     0.00e+00	  0.000
+PA: betaf = 10.00, R = 100, it = 2^18	  0.006178	       0.002314	    1.95e+10	     0.00e+00	  0.000
+PA: betaf = 10.00, R = 1000, it = 2^18	  0.003452	       0.002033	    1.73e+11	     0.00e+00	  0.000
+              BP: f = 25, beta = 0.00	  0.003218	       0.001584	    2.16e+07	     0.00e+00	  0.010

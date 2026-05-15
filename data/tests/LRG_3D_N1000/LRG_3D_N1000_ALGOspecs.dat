@@ -1,0 +1,5 @@
+# Algo   |   Specs
+# ─────────────────────────────────────────────────────
+ CLuMP   |   MAXFRUS = 1,10,50,100,150,200,300,  beta = 0,  log2_iters = 12,  RUN = 100
+    SA   |   betaf = 10.,  log2_iters = 16,  RUN = 100
+    PA   |   betaf = 10.,  log2_iters = 16,  R = 10,100,1000, RUN = 100,10
