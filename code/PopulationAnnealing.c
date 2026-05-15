@@ -1,6 +1,3 @@
-//Copyright (c) 2026 Paolo Rissone and Federico Ricci-Tersenghi
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -14,9 +11,7 @@
 //**********************************************************************************//
 
 #define MAX_LINE_LENGTH 1024
-
-//#define MAXRUNS 100000
-#define NSTEPS 10
+#define NSTEPS 100
 
 //Structure for a RRG vertex
 struct var {
@@ -246,19 +241,16 @@ void ResampleReplicas(double dbeta, replica *population, replica *new_population
     int i, j;
     double *cum_weights = (double*)malloc(MAXREPLICAS * sizeof(double));
     double total_weight = 0.0;
-    double u, target;
     
     for (i = 0; i < MAXREPLICAS; i++) {
-        double weight = exp(-dbeta * population[i].E);
+        double weight = exp( dbeta * population[i].E );
         total_weight += weight;
         cum_weights[i] = total_weight;
     }
     
     for (i = 0; i < MAXREPLICAS; i++) {
-        u = FRANDOM;
-        target = u * total_weight;
-        
         j = 0;
+        double target = FRANDOM * total_weight;
         while (j < MAXREPLICAS - 1 && target > cum_weights[j]) j++;
         CopyReplica(&new_population[i], &population[j]);
     }
@@ -374,8 +366,8 @@ void MCstep(double beta, int *spins) {
 int main(int argc, char *argv[]) {
     
     char *input, filename[100];
-    int run, iter, meas, r, m;
-    double beta, beta0, dbeta;
+    int run, iter, meas, r, m, currIter, bestIter;
+    double E, bestE, minE = 0., beta, beta0, dbeta;
     clock_t start, end;
     
     if (argc != 6) {
@@ -415,7 +407,7 @@ int main(int argc, char *argv[]) {
     bestRun.E = 1e10;  // Initialize to large value
     
     beta0 = 0.;
-    dbeta = (betaf - beta0) / (MAXITERS / NSTEPS);
+    dbeta = (betaf - beta0) / MAXITERS;
 
     start = clock();
     
@@ -456,16 +448,17 @@ int main(int argc, char *argv[]) {
                         for (int n = 0; n < MAXREPLICAS; n++)
                             CopyReplica(&bestReplicas[n], &population[n]);
                     }
+                    ComputeReplicaStats(population, bestReplica.E, &optimal[m + run * MAXMEAS].stats);
                 }
             }
             
-            //Resampling and T schedule
-            if ( iter % NSTEPS == 0 ) {
-                beta += dbeta;
-                ResampleReplicas( dbeta, population, new_population );
-                ComputeReplicaStats(population, bestReplica.E, &optimal[m + run * MAXMEAS].stats);
-            }
+            //Resampling
+            if ( iter % NSTEPS == 0 ) ResampleReplicas( dbeta, population, new_population );
             
+            //Update temperature
+            beta += dbeta;
+
+            //Update results
             if ( iter % meas == 0 ){
                 optimal[m + run * MAXMEAS].E = bestReplica.E;
                 optimal[m + run * MAXMEAS].iter = bestReplica.iter;

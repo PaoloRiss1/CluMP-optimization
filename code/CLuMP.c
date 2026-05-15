@@ -1,6 +1,3 @@
-//Copyright (c) 2026 Paolo Rissone and Federico Ricci-Tersenghi
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -425,6 +422,7 @@ int main(int argc, char *argv[]) {
             //Build cluster
             UpdateFrustration(&F,iter,ACCEPTED);
             BuildClusterRND(v, F);
+//            printCluster(v);
 
             AVRGsizeS += sizeS;
             AVRGsizeB += sizeB;
@@ -466,6 +464,8 @@ int main(int argc, char *argv[]) {
             }
             else FAILED++;
             
+//            if ( iter % NSTEPS == 0 ) MutateSpins( spins, mu0 );
+
             if ( iter % meas == 0 ){
                 optimal[m + run * MAXMEAS].E = bestE;
                 optimal[m + run * MAXMEAS].iter = bestIter;

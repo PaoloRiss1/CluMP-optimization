@@ -1,6 +1,3 @@
-//Copyright (c) 2026 Paolo Rissone and Federico Ricci-Tersenghi
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -239,6 +236,15 @@ double Energy(void){
     return E;
 }
 
+//double UpdateEnergy(int i, double E) {
+//    int s;
+//    for(int j=0; j<v[i].deg; j++){
+//        s = v[i].edges[j];
+//        E += 2. * (-v[i].spin) * v[s].spin * v[i].J[j]; //Note the inversion of spin i to update the energy
+//    }
+//    return E;
+//}
+
 double dEnergy(int i) {
     int s;
     double dE = 0.;
@@ -265,6 +271,24 @@ void MCstep(double beta) {
     }
 }
 
+////MC step
+//void MCstepRAN(int num, double T) {
+//    
+//    int index, ID;
+//    double dE;
+//    
+//    while (num) {
+//        index = (int)(FRANDOM * num);
+//        ID = list[index];
+//        list[index] = list[--num];
+//        list[num] = ID;
+//    
+//        dE = dEnergy(ID);
+//        if (dE <= 0.0 || dE <= - 0.5 * T * log(FRANDOM)) v[ID].spin = -v[ID].spin;
+//    }
+//}
+
+
 
 //**********************************************************************************//
 //-------------------------------------- MAIN --------------------------------------//
@@ -273,12 +297,12 @@ void MCstep(double beta) {
 int main(int argc, char *argv[]) {
     
     char *input, filename[100];
-    int iter, run, m, r, meas, bestIter;
+    int iter, run, m, r, meas, currIter, bestIter;
     double E, bestE, minE = 0., beta0, dbeta, beta;
     clock_t start, end;
     
     if (argc != 5) {
-        fprintf(stderr, "\n\tUsage: %s beta <log_2(iters)> RUNS 'graph.dat'\n\n", argv[0]);
+        fprintf(stderr, "\nUsage: %s beta <log_2(iters)> RUNS 'graph.dat'\n\n", argv[0]);
         exit(EXIT_FAILURE);
     }
     
@@ -340,6 +364,16 @@ int main(int argc, char *argv[]) {
             }
             iter++;
         }
+        
+//        int count=0;
+//        for(int i=0; i<N; i++){
+//            if( v[i].flip==0 ){
+//                fprintf(stderr,"%i %i\n", i, v[i].flip);
+//                count++;
+//            }
+//        }
+//        fprintf(stderr,"Tot unflipped spins: %i\n", count);
+//        
         
         run++;
     }

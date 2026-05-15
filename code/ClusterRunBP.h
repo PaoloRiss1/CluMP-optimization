@@ -1,6 +1,3 @@
-//Copyright (c) 2026 Paolo Rissone and Federico Ricci-Tersenghi
-
-
 //Initialize messages in cluster
 void initMessages(int *spins){
     int i, j, s;
@@ -9,15 +6,17 @@ void initMessages(int *spins){
     for(i = 0; i < sizeS; i++){
         pv = v + S[i];
         pv->field = 0.0;
+//        pv->field = SMALL * gaussRan();
         for (j = 0; j < pv->deg; j++){
             pv->m[j] = 0.0;
+//            pv->m[j] = - 1. + 2. * gaussRan();
             s = pv->edges[j];
             if ( v[s].isBoundary ) {
-                if ( fabs(pv->J[j]) == 1. ){
-                    *(pv->pm[j]) = spins[s] * fabs(pv->J[j]) * ( 1. - SMALL * FRANDOM );
-                }
+                if ( fabs(pv->J[j]) == 1. )
+                    *(pv->pm[j]) = spins[s] * (1. - FRANDOM * SMALL);
                 else
                     *(pv->pm[j]) = spins[s] * LARGE;
+//                *(pv->pm[j]) = spins[s] * LARGE;
             }
         }
     }
