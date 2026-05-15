@@ -1,6 +1,6 @@
-# CLuMP — Cluster-based Message-Passing Optimization
+# CluMP — Cluster-based Message-Passing Optimization
 
-**Cluster-based Message-Passing (CLuMP) Optimization in Rugged Energy Landscapes**
+**Cluster-based Message-Passing (CluMP) Optimization for Complex QUBO Problems**
 
 Paolo Rissone¹, Stefan Boettcher², Alfonso Amendola³, Simone Sala³, and Federico Ricci-Tersenghi¹·⁴·⁵
 
@@ -18,9 +18,9 @@ Paolo Rissone¹, Stefan Boettcher², Alfonso Amendola³, Simone Sala³, and Fede
 
 ## Overview
 
-This repository contains the **source code** for CLuMP and the benchmark algorithms presented in the paper, together with a **summary of the results data** (graph files and pre-processed statistics). The complete raw data archive is available separately on Zenodo: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19048237.svg)](https://doi.org/10.5281/zenodo.19048237).
+This repository contains the **source code** for CluMP and the benchmark algorithms presented in the paper, together with a **summary of the results data** (graph files and pre-processed statistics). The complete raw data archive is available separately on Zenodo: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19048237.svg)](https://doi.org/10.5281/zenodo.19048237).
 
-CLuMP is a novel message-passing-based optimization algorithm designed for spin-glass-like problems defined on sparse graphs (random regular graphs and 2D/3D lattices). It identifies frustrated clusters via belief propagation and proposes collective moves that reduce energy, outperforming standard heuristics such as Simulated Annealing and Extremal Optimization in rugged energy landscapes.
+CluMP is a novel message-passing-based optimization algorithm designed for spin-glass-like problems defined on sparse graphs (random regular graphs and 2D/3D lattices). It identifies frustrated clusters via belief propagation and proposes collective moves that reduce energy, outperforming standard heuristics such as Simulated Annealing and Extremal Optimization in rugged energy landscapes.
 
 ---
 
@@ -34,8 +34,8 @@ CLuMP is a novel message-passing-based optimization algorithm designed for spin-
 │   ├── Makefile                  # Build all main binaries with a single command
 │   ├── GraphGenerator.c          # Generate random regular graphs (RRG) and 2D/3D lattices
 │   ├── GetCluster.c              # Generate clusters at controlled frustration
-│   ├── CLuMP.c                   # CLuMP optimization algorithm
-│   ├── RCLuMP.c                  # Population-based variant of CLuMP (R-CLuMP)
+│   ├── CluMP.c                   # CluMP optimization algorithm
+│   ├── RCluMP.c                  # Population-based variant of CluMP (R-CluMP)
 │   ├── SimulatedAnnealing.c      # Simulated Annealing baseline
 │   ├── PopulationAnnealing.c     # Population Annealing baseline
 │   ├── ExtremalOpt.c             # Extremal Optimization (EO) baseline
@@ -47,13 +47,14 @@ CLuMP is a novel message-passing-based optimization algorithm designed for spin-
     ├── tests/
     │   └── [graph]/
     │       ├── [graph_id].conf              # Graph adjacency/coupling file
+    │       ├── [graph_id]_ALGOspecs.dat     # Algorithm parameters for optimization
     │       └── [graph_id]_*results.dat      # Results summary
     └── results/
         └── [graph]/
             ├── [id]/
             │   └── [graph_id].conf              # Graph adjacency/coupling file
             ├── [graph_id]_ALGOspecs.dat         # Algorithm parameters for optimization
-            └── [graph_id]_results.dat           # Results summary
+            └── [graph_id]_*results.dat          # Results summary
 ```
 
 > **Data note:** The `data/` folder in this repository contains graph files (`.conf`), algorithm parameter records (`_ALGOspecs.dat`), and pre-processed summary statistics (`*results.dat`). The complete raw data archive — all algorithm output files (`.bp`, `.bpr`, `.sa`, `.eo`, `.taueo`, `.pa`, and their energy evolution counterparts) — is available on Zenodo: [https://doi.org/10.5281/zenodo.19048237](https://doi.org/10.5281/zenodo.19048237).
@@ -94,7 +95,7 @@ make
 To build a single binary:
 
 ```bash
-make CLuMP
+make CluMP
 make GraphGenerator
 # etc.
 ```
@@ -133,9 +134,9 @@ make clean
 
 ### Step 2 — Run an optimization algorithm
 
-#### CLuMP
+#### CluMP
 ```bash
-./CLuMP [MAXFRUS] [beta] [log2_iters] [RUN] [graph.conf]
+./CluMP [MAXFRUS] [beta] [log2_iters] [RUN] [graph.conf]
 ```
 
 | Parameter | Description |
@@ -146,9 +147,9 @@ make clean
 | `RUN` | Number of independent runs |
 | `graph.conf` | Input graph file |
 
-#### R-CLuMP
+#### R-CluMP
 ```bash
-./RCLuMP [MAXFRUS] [R] [log2_iters] [RUN] [graph.conf]
+./RCluMP [MAXFRUS] [R] [log2_iters] [RUN] [graph.conf]
 ```
 
 | Parameter | Description |
@@ -217,7 +218,7 @@ python3 ResultsAnalysis.py [OUTPUT] [tolerance] [data_file(s)]
 | `tolerance` | `[0., 1.]` — energy tolerance for convergence. Default `0` (exact match) |
 | `data_file(s)` | One or more result files — **all must be in the same folder** |
 
-> **Note for CLuMP/R-CLuMP:** both the result file (`.bp` / `.bpr`) and its energy evolution counterpart (`EVO.bp` / `EVO.bpr`) must be present in the same folder.
+> **Note for CluMP/R-CluMP:** both the result file (`.bp` / `.bpr`) and its energy evolution counterpart (`EVO.bp` / `EVO.bpr`) must be present in the same folder.
 
 ---
 
@@ -253,8 +254,8 @@ cd code/ && make && cd ..
 # 1. Generate graph
 ./GraphGenerator RRG Gaussian 1000 3
 
-# 2. Run CLuMP
-./CLuMP AUTO 0 12 100 graph.conf
+# 2. Run CluMP
+./CluMP AUTO 0 12 100 graph.conf
 
 # 3. Analyse
 python3 ResultsAnalysis.py FULL 0 \
@@ -281,7 +282,8 @@ It follows a summary of data source and code to reproduce each figure:
 | Fig. 2 (main) | `data/tests/` | All graphs with Gaussian J, except `LRG_2D_N256` | ResultsAnalysis.py | Cluster size scaling with max-frustration |
 | Fig. 3 (main) | `data/results/` | `LRG_2D`, `LRG_3D`, `RRG_C10` | ResultsAnalysis.py | Algorithm comparison — energy vs. time and other stats |
 | Fig. 4 (main) | `data/results/` | `LRG_2D`, `LRG_3D`, `RRG_C10` | ResultsAnalysis.py | Collective moves analysis — energy vs. flipped spins |
-| Supp. Fig. S1 | `data/tests/` | `LRG_2D_N1024` | ResultsAnalysis.py | Extended SA and PA comparison |
+| Fig. 5 (end matter) | `data/tests/` | RRG_C4`, `RRG_C10` (J = ±1) | ResultsAnalysis.py | Requires editing the initialization of the BP messages in 'ClusterRunBP.h' |
+| Supp. Fig. S1 | `data/tests/` | `LRG_2D_N1024`, `LRG_3D_N1000` | ResultsAnalysis.py | Extended CluMP, SA, and PA comparison |
 | Supp. Fig. S2 | `data/results/` | `RRG_C4` | ResultsAnalysis.py | Extended algorithm comparison |
 | Supp. Fig. S3 | `data/results/` | `RRG_C4`, `RRG_C10` (J = ±1) | ResultsAnalysis.py | Extended comparison with integer couplings |
 
@@ -349,9 +351,9 @@ Generated by `ResultsAnalysis.py`. Contains two sections.
 If you use this code or data, please cite:
 
 ```bibtex
-@article{Rissone2025CLuMP,
+@article{Rissone2025CluMP,
   author  = {Rissone, Paolo and Boettcher, Stefan and Amendola, Alfonso and Sala, Simone and Ricci-Tersenghi, Federico},
-  title   = {Cluster-based Message-Passing ({CLuMP}) Optimization in Rugged Energy Landscapes},
+  title   = {Cluster-based Message-Passing ({CluMP}) Optimization for Complex QUBO Problems},
   journal = {XXX},
   year    = {2025},
   doi     = {10.XXXX/XXXXXX}
