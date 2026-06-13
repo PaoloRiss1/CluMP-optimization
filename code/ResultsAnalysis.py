@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# Copyright (c) 2026 Paolo Rissone and Federico Ricci-Tersenghi
-
 
 import matplotlib.pyplot as plt
 import matplotlib.pylab as plb
@@ -61,7 +59,7 @@ def extract_optimal_energies(filenames):
     
     
 def import_data(filename):
-    data = pd.read_csv(filename, delim_whitespace=True, index_col=None, header=None, comment='#', on_bad_lines='skip')
+    data = pd.read_csv(filename, sep='\s+', index_col=None, header=None, comment='#', on_bad_lines='skip')
     
     with open(filename, 'r') as file:
         lines = file.readlines()
@@ -312,7 +310,7 @@ def analyze_trajectories(trajectories, B):
     EbestEVOexp = []
     for df in EbestEVOboot:
         df_expanded = pd.merge_asof(Tfull, df, on='iterTOT', direction='backward')
-        df_expanded['dE'] = df_expanded['dE'].fillna(method='ffill')
+        df_expanded['dE'] = df_expanded['dE'].ffill()
         df_expanded['dE'] = df_expanded['dE'].fillna(df['dE'].iloc[0])
         EbestEVOexp.append(df_expanded)
         
@@ -358,11 +356,11 @@ def plot_info(N, M, data, infoALL, output):
     deltaEmin = pd.concat([pd.DataFrame({"algo": v['algo'], "dE": v['dEmin'], "iters": v['MinIter']})for k, v in data.items()], ignore_index=True).dropna()
     
     # Precompute metrics for top panel
-    successAVRG = infoALL.groupby('algoLABEL', sort=False)['success'].mean()
     infoALL['<bestIters>scaled'] = infoALL['<bestIters>'] * infoALL['scale_factor']
-    bestIt = infoALL.groupby('algoLABEL', sort=False)['<bestIters>scaled']
-    bestItAVRG = infoALL.groupby('algoLABEL', sort=False)['<bestIters>scaled'].mean()
-    bestItSTD = infoALL.groupby('algoLABEL', sort=False)['<bestIters>scaled'].std().fillna(0)
+    successAVRG = infoALL.groupby('algoLABEL', sort=False, observed=True)['success'].mean()
+    bestIt = infoALL.groupby('algoLABEL', sort=False, observed=True)['<bestIters>scaled']
+    bestItAVRG = infoALL.groupby('algoLABEL', sort=False, observed=True)['<bestIters>scaled'].mean()
+    bestItSTD = infoALL.groupby('algoLABEL', sort=False, observed=True)['<bestIters>scaled'].std().fillna(0)
 
     output.write("\n# Averge Stats\n")
     output.write("#{:>36s}\t{:>10s}\t{:>14s}\t{:>12s}\t{:>13s}\t{:>7s}\n".format("ALGO", "<dEmin/Eb>", "Err(<dEmin/Eb>)", "<minIt>", "Err(<minIt>)", "Success"))
@@ -484,7 +482,7 @@ def plot_correlation(data, INFO):
 
         idx = [k for k in INFO.keys() if os.path.basename(k.replace('EVO', '')) == file.replace('EVO', '')]
         fig.suptitle(f"N = {N}, M = {M}\n{INFO[idx[0]]['algoLABEL']}", y=0.96)
-        TitlefigCorr = Figtitle + f"f{INFO[idx[0]]['f']}_{INFO[idx[0]]['param_name']}_{INFO[idx[0]]['param_value']}_{INFO[idx[0]]['algo']}_Corr.pdf"
+        TitlefigCorr = Figtitle + f"_f{INFO[idx[0]]['f']}_{INFO[idx[0]]['param_name']}{INFO[idx[0]]['param_value']}_{INFO[idx[0]]['algo']}_Corr.pdf"
         plt.savefig(TitlefigCorr, format="pdf", bbox_inches='tight', dpi=300)
 
 
@@ -671,7 +669,7 @@ Figtitle = 'N' + str(N) + '_M' + M + '_tol' + str(tolerance)
 
 figEbestEVO = None
 if OUTPUT in ['FULL', 'OVERVIEW']:
-    figEbestEVO = plt.figure(figsize=(7, 5)) #Use (7, 5) for paper figs, (7, 10) for slides figs.
+    figEbestEVO = plt.figure(figsize=(7, 10)) #Use (7, 5) for paper figs, (7, 10) for slides figs.
 
 # Get best energies: group files by directory and find min energy for each group
 Egs = {}
@@ -902,6 +900,7 @@ if OUTPUT in ['OVERVIEW', 'FULL']:
     plt.figure(figEbestEVO.number)
     plt.xscale("log")
     plt.yscale("log")
+    plt.ylim(bottom=1.e-3)
     plt.title('N = ' + str(N) + ', M = ' + M)
     plt.xlabel('Elementary Ops. ($n$) per run')
     plt.ylabel('$\Delta E(n) = E_{best} - E(n)$')
