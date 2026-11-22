@@ -1,11 +1,11 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# Makefile — CLuMP Optimization Code
-# Cluster-based Message-Passing (CLuMP) Optimization in Rugged Energy Landscapes
+# Makefile — CluMP Optimization Code
+# Cluster-based Message-Passing (CluMP) Optimization in Rugged Energy Landscapes
 # Rissone, Boettcher, Amendola, Sala, Ricci-Tersenghi (2025)
 #
 # Usage:
 #   make          → build all binaries
-#   make <target> → build a single binary (e.g. make CLuMP)
+#   make <target> → build a single binary (e.g. make CluMP)
 #   make clean    → remove all compiled binaries
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -22,7 +22,7 @@ else
 endif
 
 # ── Targets ──────────────────────────────────────────────────────────────────
-TARGETS = GraphGenerator GetCluster CLuMP RCLuMP SimulatedAnnealing PopulationAnnealing ExtremalOpt
+TARGETS = GraphGenerator GetCluster CluMP RCluMP SimulatedAnnealing PopulationAnnealing ExtremalOpt
 
 .PHONY: all clean
 
@@ -34,10 +34,10 @@ GraphGenerator: GraphGenerator.c
 GetCluster: GetCluster.c
 	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
 
-CLuMP: CLuMP.c
+CluMP: CluMP.c
 	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
 
-RCLuMP: RCLuMP.c
+RCluMP: RCluMP.c
 	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
 
 SimulatedAnnealing: SimulatedAnnealing.c
